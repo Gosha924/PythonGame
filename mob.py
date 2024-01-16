@@ -1,5 +1,7 @@
 import pygame
-import random, math
+import time, math
+from bullets_mobs import Bullet_mobs
+from pygame.sprite import Group
 
 
 class Mob(pygame.sprite.Sprite):
@@ -9,45 +11,59 @@ class Mob(pygame.sprite.Sprite):
         self.screen = screen
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
-        self.rect.centerx = self.screen_rect.centerx
-        self.rect.bottom = self.screen_rect.bottom
+        self.rect.centerx = 1100
+        self.rect.bottom = 100
         self.center_x = float(self.rect.centerx)
         self.center_y = float(self.rect.centery)
         self.speed = 150 / 60
         self.life = True
-
-    def update_qwerty(self):
-        n = random.randint(0, 3)
-        if n == 0:
-            if self.rect.left > 0:
-                self.center_x -= self.speed
-        elif n == 1:
-            if self.rect.right < self.screen_rect.right:
-                self.center_x += self.speed
-        elif n == 2:
-            if self.rect.top > 0:
-                self.center_y -= self.speed
-        else:
-            if self.rect.bottom < self.screen_rect.bottom:
-                self.center_y += self.speed
-        self.rect.centerx = self.center_x
-        self.rect.centery = self.center_y
+        self.go_left = False
+        self.go_middle_left = False
+        self.go_straite = False
+        # Время последнего выстрела моба
+        self.last_shoot_time = time.time()
+        self.bullets_mobs = Group()
 
     def draw_mob(self):
         self.screen.blit(self.image, self.rect)
 
-    def update(self, person_pos):
-        player_x = person_pos[0]
+    def update(self, person_pos, person):
         player_y = person_pos[1]
-        if abs(self.rect.centerx - player_x) > 5 or abs(self.rect.centery - player_y) > 5:
-            dx = player_x - self.center_x
-            dy = player_y - self.center_y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            dx = dx / distance
-            dy = dy / distance
-            self.center_x += dx * self.speed
-            self.center_y += dy * self.speed
-            self.rect.centerx = self.center_x
-            self.rect.centery = self.center_y
+        if not self.go_left:
+            self.rect.centerx += self.speed
+            if self.rect.centerx >= 1165:
+                self.go_left = True
+        elif not self.go_middle_left and self.go_left:
+            self.rect.centery += self.speed
+            if self.rect.y >= 400:
+                self.go_middle_left = True
+        elif not self.go_straite and self.go_left and self.go_middle_left:
+            self.rect.centerx -= self.speed
+            if self.rect.x <= 850:
+                self.go_straite = True
+        if abs(self.rect.centery - player_y) > 3 and self.go_straite:
+            if self.rect.centery > player_y:
+                self.rect.centery -= self.speed
+            else:
+                self.rect.centery += self.speed
+        if self.go_straite:
+            # Время последнего выстрела моба
+            # Логика для стрельбы моба раз в секунду
+            if time.time() - self.last_shoot_time > 0.8:
+                # Выполнить выстрел
+                new_bullet = Bullet_mobs(self.screen, self)
+                self.bullets_mobs.add(new_bullet)
+                self.last_shoot_time = time.time()
+
+    def update_bullets_mobs(self):
+        self.bullets_mobs.update(False)
+        for bullet in self.bullets_mobs.copy():
+            if bullet.rect.right >= self.screen.get_rect().right or bullet.rect.left <= 0:
+                self.bullets_mobs.remove(bullet)
+
+
+
+
+
 
 

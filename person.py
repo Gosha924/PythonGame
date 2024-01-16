@@ -16,6 +16,7 @@ class Person(pygame.sprite.Sprite):
         self.move_down = False
         self.center_x = float(self.rect.centerx)
         self.center_y = float(self.rect.centery)
+        self.life = True
 
     def update_skin(self, new_image):
         self.image = new_image
