@@ -93,7 +93,6 @@ class Mob(pygame.sprite.Sprite):
                 self.bullets_mobs.add(new_bullet)
                 self.last_shoot_time = time.time()
 
-
     def update_bullets_mobs(self):
         self.bullets_mobs.update(self.shot)
         for bullet in self.bullets_mobs.copy():
