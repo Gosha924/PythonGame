@@ -7,7 +7,11 @@ from pygame.sprite import Group
 class Mob(pygame.sprite.Sprite):
     def __init__(self, screen, shot):
         super(Mob, self).__init__()
-        self.image = pygame.image.load('image/person_left.png')
+        self.shot = shot
+        if self.shot == 1:
+            self.image = pygame.image.load('image/mob_right.png')
+        else:
+            self.image = pygame.image.load('image/mob_left.png')
         self.screen = screen
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
