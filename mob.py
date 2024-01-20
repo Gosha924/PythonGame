@@ -43,7 +43,7 @@ class Mob(pygame.sprite.Sprite):
 
     def update(self, person_pos, person):
         lens = [i for i in range(350, 451, 35)]
-        lens2 = [i for i in range(1000, 840, -50)]
+        lens2 = [i for i in range(900, 750, -50)]
         player_y = person_pos[1]
         if self.shot == 1:
             if not self.go_left:
